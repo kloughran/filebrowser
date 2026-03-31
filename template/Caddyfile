@@ -1,0 +1,12 @@
+{
+    auto_https off
+}
+
+:443 {
+    tls internal {
+        on_demand
+    }
+    reverse_proxy filebrowser:80 {
+        header_up X-Forwarded-Proto https
+    }
+}

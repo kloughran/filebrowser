@@ -2,10 +2,19 @@ services:
   filebrowser:
     image: filebrowser/filebrowser:latest
     container_name: filebrowser
-    ports:
-      - "8080:80"
     restart: unless-stopped
     volumes:
       - /media/books:/srv
-      - /media/container-storage/filebrowser/filebrowser.db:/database/filebrowser.db
-      - /media/container-storage/filebrowser/settings.json:/config/settings.json
+      - /media/container-storage/filebrowser/filebrowser:/database
+      - /media/container-storage/filebrowser/filebrowser:/config
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "9443:443"
+    volumes:
+      - /media/container-storage/filebrowser/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - /media/container-storage/filebrowser/caddy/data:/data
+      - /media/container-storage/filebrowser/caddy/config:/config
