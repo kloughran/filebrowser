@@ -1,0 +1,12 @@
+# Append to /etc/ufw/after.rules AFTER the plex-isolation block, then: sudo ufw reload
+# Blocks both filebrowser networks (172.31.0.0/24 frontend, 172.31.1.0/24 backend) from
+# opening any new connection outside 172.31.0.0/23: LAN, router, other containers and
+# the internet. Neither caddy nor filebrowser initiates outbound traffic.
+# Replies to clients still pass.
+# Uses -I with fixed positions because the plex block ends DOCKER-USER with "-j RETURN";
+# rules appended with -A after it would never match.
+*filter
+-I DOCKER-USER 1 -s 172.31.0.0/23 -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN
+-I DOCKER-USER 2 -s 172.31.0.0/23 -d 172.31.0.0/23 -j RETURN
+-I DOCKER-USER 3 -s 172.31.0.0/23 -j DROP
+COMMIT
